@@ -68,14 +68,23 @@ export const Batches: React.FC = () => {
 
   const fetchOptions = async () => {
     try {
-      const [mRes, pRes, bRes] = await Promise.all([
+      const [mRes, pRes, bRes] = await Promise.allSettled([
         api.get('/manufacturers?show_all=true'),
         api.get('/products?show_all=true'),
         api.get('/branches?show_all=true')
       ])
-      if (mRes.data?.data) setManufacturers(mRes.data.data)
-      if (pRes.data?.data) setProducts(pRes.data.data)
-      if (bRes.data?.data) setBranches(bRes.data.data)
+      if (mRes.status === 'fulfilled') {
+        const list = mRes.value.data?.data || mRes.value.data?.payload?.data || (Array.isArray(mRes.value.data) ? mRes.value.data : [])
+        if (Array.isArray(list)) setManufacturers(list)
+      }
+      if (pRes.status === 'fulfilled') {
+        const list = pRes.value.data?.data || pRes.value.data?.payload?.data || (Array.isArray(pRes.value.data) ? pRes.value.data : [])
+        if (Array.isArray(list)) setProducts(list)
+      }
+      if (bRes.status === 'fulfilled') {
+        const list = bRes.value.data?.data || bRes.value.data?.payload?.data || (Array.isArray(bRes.value.data) ? bRes.value.data : [])
+        if (Array.isArray(list)) setBranches(list)
+      }
     } catch (err) {
       // ignore
     }
@@ -84,6 +93,7 @@ export const Batches: React.FC = () => {
   const handleOpenAdd = () => {
     form.resetFields()
     form.setFieldsValue({ status: 'active', quantity: 5000 })
+    fetchOptions()
     setModalOpen(true)
   }
 
@@ -239,34 +249,38 @@ export const Batches: React.FC = () => {
             <Input placeholder="KRL26101501" style={{ textTransform: 'uppercase', fontWeight: 700 }} />
           </Form.Item>
 
-          <Form.Item label="Manufacturing Partner Unit" name="manufacturer_id" rules={[{ required: true }]}>
-            <Select placeholder="Select manufacturer">
-              {manufacturers.map((m: any) => (
-                <Select.Option key={m.id} value={m.id}>
-                  {m.company_name} ({m.unit_code})
-                </Select.Option>
-              ))}
-            </Select>
+          <Form.Item label="Manufacturing Partner Unit" name="manufacturer_id" rules={[{ required: true, message: 'Please select manufacturing partner' }]}>
+            <Select
+              placeholder="Select manufacturer"
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              options={manufacturers.map((m: any) => ({
+                label: `${m.company_name} (${m.unit_code})`,
+                value: m.id
+              }))}
+            />
           </Form.Item>
 
-          <Form.Item label="Product (SKU)" name="product_id" rules={[{ required: true }]}>
-            <Select placeholder="Select product">
-              {products.map((p: any) => (
-                <Select.Option key={p.id} value={p.id}>
-                  {p.name}
-                </Select.Option>
-              ))}
-            </Select>
+          <Form.Item label="Product (SKU)" name="product_id" rules={[{ required: true, message: 'Please select product SKU' }]}>
+            <Select
+              placeholder="Select product"
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              options={products.map((p: any) => ({
+                label: `${p.name} (${p.sku || p.slug})`,
+                value: p.id
+              }))}
+            />
           </Form.Item>
 
           <Form.Item label="Distribution Branch (Optional)" name="branch_id">
-            <Select placeholder="Select branch" allowClear>
-              {branches.map((b: any) => (
-                <Select.Option key={b.id} value={b.id}>
-                  {b.name} ({b.code})
-                </Select.Option>
-              ))}
-            </Select>
+            <Select
+              placeholder="Select branch"
+              allowClear
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              options={branches.map((b: any) => ({
+                label: `${b.name} (${b.code})`,
+                value: b.id
+              }))}
+            />
           </Form.Item>
 
           <Space style={{ display: 'flex' }} align="baseline">

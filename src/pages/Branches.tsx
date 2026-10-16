@@ -51,8 +51,9 @@ export const Branches: React.FC = () => {
   const fetchManufacturers = async () => {
     try {
       const res = await api.get('/manufacturers?show_all=true')
-      if (res.data?.data) {
-        setManufacturers(res.data.data)
+      const list = res.data?.data || res.data?.payload?.data || (Array.isArray(res.data) ? res.data : [])
+      if (Array.isArray(list)) {
+        setManufacturers(list)
       }
     } catch (err) {
       // ignore
@@ -63,12 +64,14 @@ export const Branches: React.FC = () => {
     setEditingItem(null)
     form.resetFields()
     form.setFieldsValue({ is_active: true })
+    fetchManufacturers()
     setModalOpen(true)
   }
 
   const handleOpenEdit = (record: any) => {
     setEditingItem(record)
     form.setFieldsValue(record)
+    fetchManufacturers()
     setModalOpen(true)
   }
 
@@ -182,13 +185,15 @@ export const Branches: React.FC = () => {
           </Form.Item>
 
           <Form.Item label="Associated Manufacturer (Optional)" name="manufacturer_id">
-            <Select placeholder="Select manufacturing partner" allowClear>
-              {manufacturers.map((m: any) => (
-                <Select.Option key={m.id} value={m.id}>
-                  {m.company_name} ({m.unit_code})
-                </Select.Option>
-              ))}
-            </Select>
+            <Select
+              placeholder="Select manufacturing partner"
+              allowClear
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              options={manufacturers.map((m: any) => ({
+                label: `${m.company_name} (${m.unit_code})`,
+                value: m.id
+              }))}
+            />
           </Form.Item>
 
           <Space style={{ display: 'flex' }} align="baseline">

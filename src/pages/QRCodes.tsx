@@ -54,8 +54,9 @@ export const QRCodes: React.FC = () => {
   const fetchProducts = async () => {
     try {
       const res = await api.get('/products?show_all=true')
-      if (res.data?.data) {
-        setProducts(res.data.data)
+      const list = res.data?.data || res.data?.payload?.data || (Array.isArray(res.data) ? res.data : [])
+      if (Array.isArray(list)) {
+        setProducts(list)
       }
     } catch (err) {
       // ignore
@@ -162,7 +163,16 @@ export const QRCodes: React.FC = () => {
           </Text>
         </div>
         {hasPermission('qr_codes', 'create') && (
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)} style={{ backgroundColor: '#059669' }}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              form.resetFields()
+              fetchProducts()
+              setModalOpen(true)
+            }}
+            style={{ backgroundColor: '#059669' }}
+          >
             Generate QR Code
           </Button>
         )}
@@ -178,14 +188,15 @@ export const QRCodes: React.FC = () => {
         onOk={() => form.submit()}
       >
         <Form form={form} layout="vertical" onFinish={handleGenerate}>
-          <Form.Item label="Select Product" name="product_id" rules={[{ required: true }]}>
-            <Select placeholder="Choose product SKU">
-              {products.map((p: any) => (
-                <Select.Option key={p.id} value={p.id}>
-                  {p.name} ({p.slug})
-                </Select.Option>
-              ))}
-            </Select>
+          <Form.Item label="Select Product" name="product_id" rules={[{ required: true, message: 'Please select a product SKU' }]}>
+            <Select
+              placeholder="Choose product SKU"
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              options={products.map((p: any) => ({
+                label: `${p.name} (${p.slug})`,
+                value: p.id
+              }))}
+            />
           </Form.Item>
         </Form>
       </Modal>
