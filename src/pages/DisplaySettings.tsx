@@ -60,7 +60,8 @@ export const DisplaySettings: React.FC = () => {
   const handleSave = async (values: any) => {
     try {
       setLoading(true)
-      await api.put('/settings/display', values)
+      const dataToSave = { ...form.getFieldsValue(), ...values }
+      await api.put('/settings/display', dataToSave)
       message.success('Display settings updated successfully')
       fetchSettings()
     } catch (err) {
@@ -93,57 +94,64 @@ export const DisplaySettings: React.FC = () => {
             initialValues={previewValues}
           >
             <Title level={5}>Manufacturer Details Visibility</Title>
-            <Form.Item name="show_company_name" valuePropName="checked">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text strong>Show Manufacturing Unit Name</Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text strong>Show Manufacturing Unit Name</Text>
+              <Form.Item name="show_company_name" valuePropName="checked" noStyle>
                 <Switch />
-              </div>
-            </Form.Item>
+              </Form.Item>
+            </div>
 
-            <Form.Item name="show_address" valuePropName="checked">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text strong>Show Physical Address (City, State, Pincode)</Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text strong>Show Physical Address (City, State, Pincode)</Text>
+              <Form.Item name="show_address" valuePropName="checked" noStyle>
                 <Switch />
-              </div>
-            </Form.Item>
+              </Form.Item>
+            </div>
 
-            <Form.Item name="show_fssai" valuePropName="checked">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text strong>Show Unit FSSAI License Number</Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text strong>Show Unit FSSAI License Number</Text>
+              <Form.Item name="show_fssai" valuePropName="checked" noStyle>
                 <Switch />
-              </div>
-            </Form.Item>
+              </Form.Item>
+            </div>
 
-            <Form.Item name="show_contact" valuePropName="checked">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text strong>Show Unit Support Contact Phone</Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text strong>Show Unit Support Contact Phone</Text>
+              <Form.Item name="show_contact" valuePropName="checked" noStyle>
                 <Switch />
-              </div>
-            </Form.Item>
+              </Form.Item>
+            </div>
 
             <Divider />
 
             <Title level={5}>Batch & Product Level Details</Title>
-            <Form.Item name="show_product_name" valuePropName="checked">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text strong>Show Product Name & Pack Size</Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text strong>Show Product Name & Pack Size</Text>
+              <Form.Item name="show_product_name" valuePropName="checked" noStyle>
                 <Switch />
-              </div>
-            </Form.Item>
+              </Form.Item>
+            </div>
 
-            <Form.Item name="show_mfg_date" valuePropName="checked">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text strong>Show Manufacturing Date</Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text strong>Show Manufacturing Date</Text>
+              <Form.Item name="show_mfg_date" valuePropName="checked" noStyle>
                 <Switch />
-              </div>
-            </Form.Item>
+              </Form.Item>
+            </div>
 
-            <Form.Item name="show_expiry_date" valuePropName="checked">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text strong>Show Expiry Date</Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text strong>Show Expiry Date</Text>
+              <Form.Item name="show_expiry_date" valuePropName="checked" noStyle>
                 <Switch />
-              </div>
-            </Form.Item>
+              </Form.Item>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text strong>Show Packaging / Branch Location</Text>
+              <Form.Item name="show_branch" valuePropName="checked" noStyle>
+                <Switch />
+              </Form.Item>
+            </div>
 
             <Divider />
 
