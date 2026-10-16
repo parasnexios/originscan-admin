@@ -51,8 +51,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       try {
         const res = await api.get('/auth/me')
-        if (res.data?.data) {
-          const u = res.data.data
+        const meData = res.data?.data || res.data?.payload?.data
+        if (meData) {
+          const u = meData
           const perms = u.permissions || {}
           setUser(u)
           setPermissions(perms)

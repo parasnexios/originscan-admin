@@ -22,8 +22,9 @@ export const Login: React.FC = () => {
         password: values.password
       })
 
-      if (res.data?.data) {
-        const { token, user, permissions } = res.data.data
+      const loginPayload = res.data?.data || res.data?.payload?.data
+      if (loginPayload) {
+        const { token, user, permissions } = loginPayload
         login(token, user, permissions)
         navigate('/')
       }

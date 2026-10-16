@@ -14,7 +14,16 @@ api.interceptors.request.use((config) => {
 })
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.data && response.data.payload) {
+      if (response.data.payload.data !== undefined) {
+        response.data.data = response.data.payload.data
+      } else {
+        response.data.data = response.data.payload
+      }
+    }
+    return response
+  },
   (error) => {
     if (error.response?.status === 401 && !window.location.pathname.includes('/login')) {
       localStorage.removeItem('originscan_token')
